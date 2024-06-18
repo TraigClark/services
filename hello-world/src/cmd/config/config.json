@@ -1,0 +1,104 @@
+{
+    "Devices" : [
+        {
+            "Mqtt_broker": "tcp://localhost:1883",
+            "Mqtttopic": "modbus0",
+            "Slave_id": 0,
+            "Timeout": 1,
+            "Sample_rate": 1,
+            "Reconnect_rate": 5,
+            "Tags": [
+        {
+            "Register": 0,
+            "Register_type": "holding",
+            "Rag_name": "tag1"
+        },
+        {
+            "Register": 1,
+            "Register_type": "holding",
+            "Tag_name": "tag2"
+        },
+        {
+            "Register": 2,
+            "Register_type": "holding",
+            "Tag_name": "tag3"
+        },
+        {
+            "Register": 3,
+            "Register_type": "holding",
+            "Tag_name": "tag4"
+        },
+        {
+            "Register": 4,
+            "Register_type": "holding",
+            "Tag_name": "tag5"
+        },
+        {
+            "Register": 5,
+            "Register_type": "holding",
+            "Tag_name": "tag6"
+        },
+        {
+            "Register": 321,
+            "Register_type": "holding",
+            "Tag_name": "tag6"
+        },
+        {
+            "Register": 503,
+            "Register_type": "holding",
+            "Tag_name": "tag503"
+        }
+                ]
+        },
+        {
+            "Mqtt_broker": "tcp://localhost:1883",
+            "Mqtttopic": "modbus1",
+            "Slave_id": 1,
+            "Timeout": 1,
+            "Sample_rate": 1,
+            "Reconnect_rate": 5,
+            "Tags": [
+        {
+            "Register": 0,
+            "Register_type": "holding",
+            "Tag_name": "tag1"
+        },
+        {
+            "Register": 1,
+            "Register_type": "holding",
+            "Tag_name": "tag2"
+        },
+        {
+            "Register": 2,
+            "Register_type": "holding",
+            "Tag_name": "tag3"
+        },
+        {
+            "Register": 3,
+            "Register_type": "holding",
+            "Tag_name": "tag4"
+        },
+        {
+            "Register": 4,
+            "Register_type": "holding",
+            "Tag_name": "tag5"
+        },
+        {
+            "Register": 5,
+            "Register_type": "holding",
+            "Tag_name": "tag6"
+        },
+        {
+            "Register": 322,
+            "Register_type": "holding",
+            "Tag_name": "tag6"
+        },
+        {
+            "Register": 521,
+            "Register_type": "holding",
+            "Tag_name": "tag503"
+        }
+                ]
+        }
+    ]
+}
