@@ -14,31 +14,6 @@
             "Rag_name": "tag1"
         },
         {
-            "Register": 1,
-            "Register_type": "holding",
-            "Tag_name": "tag2"
-        },
-        {
-            "Register": 2,
-            "Register_type": "holding",
-            "Tag_name": "tag3"
-        },
-        {
-            "Register": 3,
-            "Register_type": "holding",
-            "Tag_name": "tag4"
-        },
-        {
-            "Register": 4,
-            "Register_type": "holding",
-            "Tag_name": "tag5"
-        },
-        {
-            "Register": 5,
-            "Register_type": "holding",
-            "Tag_name": "tag6"
-        },
-        {
             "Register": 321,
             "Register_type": "holding",
             "Tag_name": "tag6"
@@ -59,34 +34,9 @@
             "Reconnect_rate": 5,
             "Tags": [
         {
-            "Register": 0,
-            "Register_type": "holding",
-            "Tag_name": "tag1"
-        },
-        {
-            "Register": 1,
-            "Register_type": "holding",
-            "Tag_name": "tag2"
-        },
-        {
-            "Register": 2,
-            "Register_type": "holding",
-            "Tag_name": "tag3"
-        },
-        {
-            "Register": 3,
-            "Register_type": "holding",
-            "Tag_name": "tag4"
-        },
-        {
             "Register": 4,
             "Register_type": "holding",
-            "Tag_name": "tag5"
-        },
-        {
-            "Register": 5,
-            "Register_type": "holding",
-            "Tag_name": "tag6"
+            "Tag_name": "tag1"
         },
         {
             "Register": 322,

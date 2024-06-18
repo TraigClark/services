@@ -21,20 +21,18 @@ func ModbusClient(modbus.ClientHandler, modbus.Client) {
 		fmt.Printf("Error connecting to Modbus server: %v\n", err)
 	}
 	defer handler.Close()
-	
-	client1 := modbus.NewClient(handler)
-	
+
+	client := modbus.NewClient(handler)
+
 	// Slave 1
 	handler.SlaveId = 0
-	client1.WriteSingleRegister(0, 12)
-	client1.WriteSingleRegister(321, 52)
-	client1.WriteSingleRegister(503, 492)
-
-	client2 := modbus.NewClient(handler)
+	client.WriteSingleRegister(0, 12)
+	client.WriteSingleRegister(321, 52)
+	client.WriteSingleRegister(503, 492)
 
 	// Slave 2
 	handler.SlaveId = 1
-	client2.WriteSingleRegister(4, 34)
-	client2.WriteSingleRegister(322, 54)
-	client2.WriteSingleRegister(521, 493)
+	client.WriteSingleRegister(4, 34)
+	client.WriteSingleRegister(322, 54)
+	client.WriteSingleRegister(521, 493)
 }

@@ -1,7 +1,6 @@
 package service
 
 import (
-	"encoding/binary"
 	"fmt"
 	"main/internal/configpkg"
 	"main/internal/modbusmaker"
@@ -82,11 +81,12 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 							fmt.Println("Error sampling int:", err)
 							connected = false
 						} else {
-							value := binary.BigEndian.Uint16(values)
-							if value != 0 {
-								fmt.Printf("Sampled register %d from slave %d with value %d\n", registerValue, config.SlaveId, value)
-								mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%v", value))
-								fmt.Println(values)
+							for i, value := range values {
+								if value != 0 {
+									fmt.Printf("Sampled register %d from slave %d with value %d\n", registerValue, config.SlaveId, value)
+									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%v", value))
+									fmt.Println(values[i])
+								}
 							}
 						}
 					}
