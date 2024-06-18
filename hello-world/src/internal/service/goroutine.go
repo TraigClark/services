@@ -86,6 +86,7 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 							if value != 0 {
 								fmt.Printf("Sampled register %d from slave %d with value %d\n", registerValue, config.SlaveId, value)
 								mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%v", value))
+								fmt.Println(values)
 							}
 						}
 					}
