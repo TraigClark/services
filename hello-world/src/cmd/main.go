@@ -8,7 +8,7 @@ import (
 	"main/internal/modbusmaker"
 
 	//imported from external package
-	"fmt"
+	"log"
 	"sync"
 	"time"
 	"github.com/goburrow/modbus"
@@ -18,7 +18,7 @@ func main() {
 	// Read JSON file
 	config1, err := configpkg.ReadConfigFromFile("config/config.json")
 	if err != nil {
-		fmt.Printf("Error reading config file: %v\n", err)
+		log.Printf("Error reading config file: %v\n", err)
 		return
 	}
 
@@ -36,7 +36,7 @@ func main() {
 	time.Sleep(100 * time.Second)
 	close(stopper)
 	wg.Wait()
-
+	
 	for _, device := range config1.Devices {
 		handler := modbus.NewTCPClientHandler(device.Mqttbroker)
 		client := modbus.NewClient(handler)

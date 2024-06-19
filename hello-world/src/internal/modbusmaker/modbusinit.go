@@ -2,23 +2,24 @@ package modbusmaker
 
 //imported from external package for modbus and mqtt
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
-
+	"main/internal/configpkg"
 	"github.com/goburrow/modbus"
 )
 
 func ModbusClient(modbus.ClientHandler, modbus.Client) {
 	// Modbus TCP
-	handler := modbus.NewTCPClientHandler("127.0.0.1:502")
+	handler := modbus.NewTCPClientHandler("host.docker.internal:502")
 	handler.Timeout = 10 * time.Second
 	handler.SlaveId = 0
 	handler.Logger = log.New(os.Stdout, "modbus: ", log.LstdFlags)
 
 	if err := handler.Connect(); err != nil {
-		fmt.Printf("Error connecting to Modbus server: %v\n", err)
+		log.Printf("Error connecting to Modbus server: %v\n", err)
+	} else {
+		log.Println("No error connecting to modbus server")
 	}
 	defer handler.Close()
 
@@ -35,4 +36,42 @@ func ModbusClient(modbus.ClientHandler, modbus.Client) {
 	client.WriteSingleRegister(4, 34)
 	client.WriteSingleRegister(322, 54)
 	client.WriteSingleRegister(521, 493)
+}
+
+func OrganizeRegisters(config *configpkg.DeviceConfig)(groupfin [][]int, registersfin []int) {
+	// Create an empty slice to store the groups of registers
+	groups := make([][]int, 0)
+	var registers []int
+
+	// map creation
+	existingGroups := make(map[int]bool)
+
+	// Initialize the selected registers to be sampled
+	selectedRegister := config.Tags
+	// []int{0, 321, 503, 4, 322, 521}
+	
+	// Initialize the group size for register grouping
+	groupSize := newFunction()
+
+	///////////////////////////////////////////////
+
+	// iterates over selected registers
+	for _, register := range selectedRegister {
+		registerValue := register.Register
+		registers = append(registers, int(registerValue))
+		
+		group := int(registerValue) / groupSize
+
+		// check if group already exists
+		if !existingGroups[group] {
+			groups = append(groups, []int{group})
+			existingGroups[group] = true
+		}
+	}
+	return groups, registers
+}
+
+func newFunction() int {
+	groupSize := 125
+	return groupSize
 }

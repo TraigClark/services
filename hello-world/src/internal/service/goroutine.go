@@ -3,6 +3,7 @@ package service
 import (
 	"encoding/binary"
 	"fmt"
+	"log"
 	"main/internal/configpkg"
 	"main/internal/modbusmaker"
 	"main/internal/mqttfile"
@@ -16,8 +17,9 @@ import (
 func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.DeviceConfig, ret mqtt.Client) {
 
 	// Create a new TCP client handler for Modbus communication
-	handler := modbus.NewTCPClientHandler("127.0.0.1:502")
+	handler := modbus.NewTCPClientHandler("host.docker.internal:502")
 	client := modbus.NewClient(handler)
+	log.Println("handler and client initalized")
 
 	// Initialize the Modbus client
 	modbusmaker.ModbusClient(handler, client)
@@ -34,6 +36,11 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 	reconnectTicker := time.NewTicker(time.Duration(config.ReconnectRate) * time.Second)
 	defer reconnectTicker.Stop()
 
+	mqttTicker := time.NewTicker(time.Duration(config.ReconnectRate) * time.Second)
+	defer mqttTicker.Stop()
+
+	log.Println("tickers initalized")
+
 	// Set the timeout and slave ID for the Modbus handler
 	handler.Timeout = time.Duration(config.Timeout) * time.Millisecond
 	handler.SlaveId = config.SlaveId
@@ -41,77 +48,67 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 	// Initialize the group size for register grouping
 	groupSize := 125
 
-	// Initialize the selected registers to be sampled
-	selectedRegister := config.Tags
-	// []int{0, 321, 503, 4, 322, 521}
-
-	// Create an empty slice to store the groups of registers
-	groups := make([][]int, 0)
-
 	for {
 		select {
 		case <-stopper:
 			return
 		case <-sampler.C:
-			// map creation
-			existingGroups := make(map[int]bool)
-
-			// mark existing groups
-			for _, existingGroup := range groups {
-				existingGroups[existingGroup[0]] = true
-			}
-
-			// iterates over selected registers
-			for _, register := range selectedRegister {
-				registerValue := register.Register
-
-				group := int(registerValue) / groupSize
-
-				// check if already exists
-				if !existingGroups[group] {
-					groups = append(groups, []int{group})
-					existingGroups[group] = true
-				}
-				
-				if connected {
-					// sampling the register
-					for _, group := range groups {
-						values, err := client.ReadHoldingRegisters(uint16(group[0]*groupSize), uint16(groupSize))
-						if err != nil {
-							// err handling
-							fmt.Println("Error sampling int:", err)
-							connected = false
-						} else {
-							value := binary.BigEndian.Uint16(values)
-							if value != 0 {
-								fmt.Printf("Sampled register %d from slave %d with value %d\n", registerValue, config.SlaveId, value)
-								mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%v", value))
-								fmt.Println(values)
+			if connected {
+				log.Println("connected")
+				//ware := config.Tags[0].TagName
+				groups, registers := modbusmaker.OrganizeRegisters(config)
+				// sampling the register
+				for j := 0; j < len(groups); j++ {
+					values, err := client.ReadHoldingRegisters(uint16(groups[j][0]*groupSize), uint16(groupSize))
+					if err != nil {
+						// err handling
+						log.Println("Error sampling int:", err)
+						connected = false
+					} else {
+						// iterate through length of register array
+						for i := 0; i < len(registers); i++ {
+							if registers[i]/groupSize == groups[j][0] {
+								value := binary.BigEndian.Uint16(values[((registers[i])-(groupSize*groups[j][0]))*2:]) //values)
+								if value != 0 {
+									log.Printf("Sampled register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(value)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
+									test := (float64(value) * config.Tags[i].Multiplier) + config.Tags[i].Offset
+									val := config.Tags[i].TagName
+									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%s: %f", val, test))
+								}
 							}
 						}
 					}
-				} else {
-					fmt.Println("Not connected, skipping sampling")
-
-					var err error
-					fmt.Println("Error connecting:", err)
-					connected = false
 				}
+			} else {
+				log.Println("Not connected, skipping sampling")
+				var err error
+				log.Println("Error connecting:", err)
+				connected = false
 			}
 		case <-reconnectTicker.C:
 			if !connected {
 				handler.Close()
 				if err := handler.Connect(); err != nil {
-					fmt.Println("Reconnection Failed")
-					fmt.Println(err)
+					log.Println("Reconnection Failed")
+					log.Println(err)
 				} else {
 					client = modbus.NewClient(handler)
-					fmt.Println("Reconnection worked")
+					log.Println("Reconnection worked")
 					connected = true
+				}
+			}
+		case <- mqttTicker.C:
+			if ret.IsConnected() {
+				log.Println("MQTT connection is already established")
+			} else {
+				log.Println("MQTT connection is not established, reconnecting...")
+				mqttfile.MqttInit(&configpkg.Config{})
+				if token := ret.Connect(); token.Wait() && token.Error() != nil {
+					log.Println("MQTT reconnection failed:", token.Error())
+				} else {
+					log.Println("MQTT reconnection successful")
 				}
 			}
 		}
 	}
 }
-
-// Helper function to check if a group already exists in the groups array

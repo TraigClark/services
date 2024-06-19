@@ -3,7 +3,7 @@ package mqttfile
 import (
 	"github.com/eclipse/paho.mqtt.golang"
 	"main/internal/configpkg"
-	"fmt"
+	"log"
 )
 
 //copy - pasted from original main.go
@@ -15,7 +15,7 @@ func MqttInit(config *configpkg.Config) mqtt.Client {
 	mqttClient := mqtt.NewClient(opts)
 	if token := mqttClient.Connect(); token.Wait() && token.Error() != nil {
 		if token.Error() != nil {
-			fmt.Println(token.Error())
+			log.Println(token.Error())
 		}
 	}
 	
