@@ -87,6 +87,9 @@ ARG APP_GIT_COMMIT
  
 # set working directory to app
 WORKDIR /root/
+
+#
+RUN mkdir config
  
 # copy the binary and files
 COPY --from=build /app/main .
