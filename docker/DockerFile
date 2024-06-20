@@ -26,7 +26,7 @@ ARG GO_FLAGS="-ldflags=-w -ldflags=-s"
 #---------------------------------------------------------------------------------------------------
  
 # build stage
-FROM ${DOCKER_BUILD_IMAGE} AS builder
+FROM ${DOCKER_BUILD_IMAGE} AS build
 LABEL stage=build
 # declare arguments within this scope
 # note: Target OS and Arch come from Build Platform
@@ -91,7 +91,7 @@ RUN mkdir config
  
 # copy the binary and files
 COPY --from=build /app/main .
-COPY --from=build /app/src/internal/configpkg/config.json ./config
+COPY --from=build /app/src/cmd/config/config.json ./config
  
 # meta
 LABEL os=${TARGETOS}
@@ -103,6 +103,7 @@ LABEL commit=${APP_GIT_COMMIT}
 
 # expose ports
 EXPOSE 1883
+EXPOSE 1502
 EXPOSE 1884
  
 CMD [ "./main" ]

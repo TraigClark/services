@@ -1,6 +1,6 @@
 module main
 
-go 1.22.4
+go 1.20
 
 require (
 	github.com/eclipse/paho.mqtt.golang v1.4.4-0.20240520022819-6801721ef78f

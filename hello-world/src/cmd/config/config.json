@@ -1,7 +1,7 @@
 {
     "Devices" : [
         {
-            "Mqtt_broker": "host.docker.internal:1883",
+            "Mqtt_broker": "host.docker.internal:1884",
             "Mqtttopic": "modbus0",
             "Slave_id": 0,
             "Timeout": 1,
@@ -23,6 +23,13 @@
             "multiplier" : 1.75
         },
         {
+            "Register": 501,
+            "Register_type": "input",
+            "Tag_name": "tag501",
+            "offset" : 2.00,
+            "multiplier" : 3.20
+        },
+        {
             "Register": 503,
             "Register_type": "holding",
             "Tag_name": "tag503",
@@ -32,7 +39,7 @@
                 ]
         },
         {
-            "Mqtt_broker": "host.docker.internal:1883",
+            "Mqtt_broker": "host.docker.internal:1884",
             "Mqtttopic": "modbus1",
             "Slave_id": 1,
             "Timeout": 1,
@@ -53,6 +60,13 @@
             "Tag_name": "tag322",
             "offset" : 3.00,
             "multiplier" : 2.50
+        },
+        {
+            "Register": 500,
+            "Register_type": "input",
+            "Tag_name": "tag500",
+            "offset" : 2.00,
+            "multiplier" : 3.20
         },
         {
             "Register": 521,

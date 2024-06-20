@@ -17,7 +17,7 @@ import (
 func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.DeviceConfig, ret mqtt.Client) {
 
 	// Create a new TCP client handler for Modbus communication
-	handler := modbus.NewTCPClientHandler("host.docker.internal:502")
+	handler := modbus.NewTCPClientHandler("host.docker.internal:1502")
 	client := modbus.NewClient(handler)
 	log.Println("handler and client initalized")
 
@@ -59,21 +59,31 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 				groups, registers := modbusmaker.OrganizeRegisters(config)
 				// sampling the register
 				for j := 0; j < len(groups); j++ {
-					values, err := client.ReadHoldingRegisters(uint16(groups[j][0]*groupSize), uint16(groupSize))
+					valuesHolding, err := client.ReadHoldingRegisters(uint16(groups[j][0]*groupSize), uint16(groupSize))
+					valuesInput, err := client.ReadInputRegisters(uint16(groups[j][0]*groupSize), uint16(groupSize))
 					if err != nil {
-						// err handling
-						log.Println("Error sampling int:", err)
+						// error handling
+						log.Println("Error sampling input registers:", err)
 						connected = false
 					} else {
 						// iterate through length of register array
 						for i := 0; i < len(registers); i++ {
 							if registers[i]/groupSize == groups[j][0] {
-								value := binary.BigEndian.Uint16(values[((registers[i])-(groupSize*groups[j][0]))*2:]) //values)
-								if value != 0 {
-									log.Printf("Sampled register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(value)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
-									test := (float64(value) * config.Tags[i].Multiplier) + config.Tags[i].Offset
-									val := config.Tags[i].TagName
-									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%s: %f", val, test))
+								valuesHolding := binary.BigEndian.Uint16(valuesHolding[((registers[i])-(groupSize*groups[j][0]))*2:])
+								valuesInput := binary.BigEndian.Uint16(valuesInput[((registers[i])-(groupSize*groups[j][0]))*2:])
+
+								if valueHolding != 0 {
+									log.Printf("Sampled holding register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(valueHolding)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
+									test := (float64(valueHolding) * config.Tags[i].Multiplier) + config.Tags[i].Offset
+									val1 := config.Tags[i].TagName
+									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%s: %f", val1, test))
+								}
+
+								if valueInput != 0 {
+									log.Printf("Sampled holding register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(valueInput)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
+									test := (float64(valueInput) * config.Tags[i].Multiplier) + config.Tags[i].Offset
+									val2 := config.Tags[i].TagName
+									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%s: %f", val2, test))
 								}
 							}
 						}
