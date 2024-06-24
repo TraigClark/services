@@ -1,7 +1,7 @@
 {
     "Devices" : [
         {
-            "Mqtt_broker": "host.docker.internal:1884",
+            "Mqttbroker": "host.docker.internal:1883",
             "Mqtttopic": "modbus0",
             "Slave_id": 0,
             "Timeout": 1,
@@ -39,7 +39,7 @@
                 ]
         },
         {
-            "Mqtt_broker": "host.docker.internal:1884",
+            "Mqttbroker": "host.docker.internal:1883",
             "Mqtttopic": "modbus1",
             "Slave_id": 1,
             "Timeout": 1,

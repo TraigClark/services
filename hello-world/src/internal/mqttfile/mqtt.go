@@ -1,9 +1,11 @@
 package mqttfile
 
 import (
-	"github.com/eclipse/paho.mqtt.golang"
-	"main/internal/configpkg"
 	"log"
+	"main/internal/configpkg"
+	"time"
+
+	mqtt "github.com/eclipse/paho.mqtt.golang"
 )
 
 //copy - pasted from original main.go
@@ -18,11 +20,14 @@ func MqttInit(config *configpkg.Config) mqtt.Client {
 			log.Println(token.Error())
 		}
 	}
-	
+
 	return mqttClient
 }
 
 func Publish(client mqtt.Client, topic string, payload string) {
 	token := client.Publish(topic, 0, false, payload)
-	token.Wait()
+	status := token.WaitTimeout(time.Duration(5) * time.Second)
+	if !status {
+		log.Println("its cooked")
+	}
 }

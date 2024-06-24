@@ -1,6 +1,6 @@
 module main
 
-go 1.23
+go 1.20
 
 require github.com/tbrandon/mbserver v0.0.0-20231208015628-36eb59221ac2
 

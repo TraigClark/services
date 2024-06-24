@@ -54,8 +54,8 @@ RUN echo Service Name: $APP_NAME
 WORKDIR /app
 
 # copy go.mod and go.sum
-COPY src/go.mod src/go.sum ./src/
-COPY src/ ./src/
+COPY /hello-world/src/go.mod /hello-world/src/go.sum ./src/
+COPY /hello-world/src/ ./src/
 
 # move to src directory
 WORKDIR /app/src

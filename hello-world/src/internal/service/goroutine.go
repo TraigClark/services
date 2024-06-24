@@ -17,7 +17,7 @@ import (
 func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.DeviceConfig, ret mqtt.Client) {
 
 	// Create a new TCP client handler for Modbus communication
-	handler := modbus.NewTCPClientHandler("host.docker.internal:1502")
+	handler := modbus.NewTCPClientHandler("127.0.0.1:1502")
 	client := modbus.NewClient(handler)
 	log.Println("handler and client initalized")
 
@@ -42,7 +42,8 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 	log.Println("tickers initalized")
 
 	// Set the timeout and slave ID for the Modbus handler
-	handler.Timeout = time.Duration(config.Timeout) * time.Millisecond
+	//change back
+	handler.Timeout = time.Duration(100) * time.Second
 	handler.SlaveId = config.SlaveId
 
 	// Initialize the group size for register grouping
@@ -76,6 +77,7 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 									log.Printf("Sampled holding register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(value)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
 									test := (float64(value) * config.Tags[i].Multiplier) + config.Tags[i].Offset
 									val1 := config.Tags[i].TagName
+									log.Println(fmt.Sprintf("%s: %f", val1, test))
 									mqttfile.Publish(ret, config.Mqtttopic, fmt.Sprintf("%s: %f", val1, test))
 								}
 
@@ -107,7 +109,7 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 					connected = true
 				}
 			}
-		case <- mqttTicker.C:
+		case <-mqttTicker.C:
 			if ret.IsConnected() {
 				log.Println("MQTT connection is already established")
 			} else {

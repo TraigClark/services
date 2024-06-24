@@ -1,8 +1,8 @@
 package mqttfile
 
 const (
-	broker = "tcp://localhost:1884"
-	clientID = "go-simple"
+	broker      = "127.0.0.1:1883"
+	clientID    = "go-simple"
 	ErrFailRead = "Failed to read config file: %v"
-	configFile = "config.json"
+	configFile  = "config.json"
 )
