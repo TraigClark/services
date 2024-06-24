@@ -69,12 +69,13 @@ func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.Devi
 					} else {
 						// iterate through length of register array
 						for i := 0; i < len(registers); i++ {
+							id := config.SlaveId
 							if registers[i]/groupSize == groups[j][0] {
 								value := binary.BigEndian.Uint16(values[((registers[i])-(groupSize*groups[j][0]))*2:])
 								// valuesInput := binary.BigEndian.Uint16(valuesInput[((registers[i])-(groupSize*groups[j][0]))*2:])
 
 								if value != 0 {
-									log.Printf("Sampled holding register %v from slave %v with value %v\n", registers[i], config.SlaveId, (float64(value)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
+									log.Printf("Sampled holding register %v from slave %v with value %v\n", registers[i], id, (float64(value)*config.Tags[i].Multiplier)+config.Tags[i].Offset)
 									test := (float64(value) * config.Tags[i].Multiplier) + config.Tags[i].Offset
 									val1 := config.Tags[i].TagName
 									log.Println(fmt.Sprintf("%s: %f", val1, test))
