@@ -3,15 +3,14 @@ package main
 import (
 	//imported from internal package
 	"main/internal/configpkg"
-	"main/internal/modbusmaker"
 	"main/internal/mqttfile"
 	"main/internal/service"
+	"main/internal/modbusmaker"
 
 	//imported from external package
 	"log"
 	"sync"
 	"time"
-
 	"github.com/goburrow/modbus"
 )
 
@@ -23,7 +22,7 @@ func main() {
 		return
 	}
 
-	//mqttInit
+	// mqttInit
 	ret := mqttfile.MqttInit(config1)
 
 	var wg sync.WaitGroup
@@ -37,7 +36,7 @@ func main() {
 	time.Sleep(100 * time.Second)
 	close(stopper)
 	wg.Wait()
-
+	
 	for _, device := range config1.Devices {
 		handler := modbus.NewTCPClientHandler(device.Mqttbroker)
 		client := modbus.NewClient(handler)
