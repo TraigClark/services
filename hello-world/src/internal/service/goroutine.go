@@ -15,7 +15,6 @@ import (
 )
 
 func GoRoutine(wg *sync.WaitGroup, stopper chan struct{}, config *configpkg.DeviceConfig, ret mqtt.Client) {
-
 	// Create a new TCP client handler for Modbus communication
 	handler := modbus.NewTCPClientHandler("127.0.0.1:1502")
 	client := modbus.NewClient(handler)

@@ -52,7 +52,7 @@ func OrganizeRegisters(config *configpkg.DeviceConfig) (groupfin [][]int, regist
 	// []int{0, 321, 503, 4, 322, 521}
 
 	// Initialize the group size for register grouping
-	groupSize := newFunction()
+	groupSize := 125
 
 	///////////////////////////////////////////////
 
@@ -70,9 +70,4 @@ func OrganizeRegisters(config *configpkg.DeviceConfig) (groupfin [][]int, regist
 		}
 	}
 	return groups, registers
-}
-
-func newFunction() int {
-	groupSize := 125
-	return groupSize
 }
