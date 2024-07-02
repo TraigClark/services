@@ -1,0 +1,28 @@
+# docker-compose.yml in services directory
+
+version: '3.9'
+
+services:
+  mosquitto:
+    image: eclipse-mosquitto:latest
+    container_name: mosquitto
+    restart: always
+    ports:
+      - "1883:1883"
+      - "9001:9001" # WebSocket port, optional
+    volumes:
+      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/data:/mosquitto/data
+      - ./mosquitto/log:/mosquitto/log
+
+  go_service:
+    build:
+      context: ./hello-world/src
+    container_name: go_service
+    depends_on:
+      - mosquitto
+    volumes:
+      - ./hello-world/src:/app
+    environment:
+      - BROKER_ADDRESS=mosquitto
+      - BROKER_PORT=1883
