@@ -12,7 +12,7 @@ import (
 
 func ModbusClient(modbus.ClientHandler, modbus.Client) {
 	// Modbus TCP
-	handler := modbus.NewTCPClientHandler("127.0.0.1:1502")
+	handler := modbus.NewTCPClientHandler("host.docker.internal:1502")
 	handler.Timeout = 10 * time.Second
 	handler.SlaveId = 0
 	handler.Logger = log.New(os.Stdout, "modbus: ", log.LstdFlags)

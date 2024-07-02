@@ -38,7 +38,8 @@ func main() {
 	wg.Wait()
 	
 	for _, device := range config1.Devices {
-		handler := modbus.NewTCPClientHandler(device.Mqttbroker)
+		log.Println(device)
+		handler := modbus.NewTCPClientHandler("host.docker.internal:1502")
 		client := modbus.NewClient(handler)
 		modbusmaker.ModbusClient(handler, client)
 	}
