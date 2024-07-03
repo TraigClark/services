@@ -1,5 +1,3 @@
-# docker-compose.yml in services directory
-
 version: '3.9'
 
 services:
@@ -11,7 +9,7 @@ services:
       - "1883:1883"
       - "9001:9001" # WebSocket port, optional
     volumes:
-      - ./mosquitto/config:/mosquitto/config
+      - ./mosquitto/config/mosquitto.conf:/etc/mosquitto/mosquitto.conf
       - ./mosquitto/data:/mosquitto/data
       - ./mosquitto/log:/mosquitto/log
 
@@ -23,6 +21,7 @@ services:
       - mosquitto
     volumes:
       - ./hello-world/src:/app
+      - ./hello-world/src/config:/app/config
     environment:
       - BROKER_ADDRESS=mosquitto
       - BROKER_PORT=1883
